@@ -12,7 +12,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginBottom="10dp"
-        android:text="Max Acceleration:"
+        android:text="Acceleration:"
         android:textSize="20dp" />
 
     <TextView
@@ -20,7 +20,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:text="Max Acceleration: X-Axis"
+        android:text="Acceleration: X-Axis"
         android:textSize="15dp" />
 
     <TextView
@@ -37,7 +37,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:text="Max Acceleration: Y-Axis"
+        android:text="Acceleration: Y-Axis"
         android:textSize="15dp" />
 
     <TextView
@@ -54,7 +54,7 @@
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:layout_marginTop="20dp"
-        android:text="Max Acceleration: Z-Axis"
+        android:text="Acceleration: Z-Axis"
         android:textSize="15dp" />
 
     <TextView
@@ -66,21 +66,14 @@
         android:text="0.0"
         android:textSize="20dp" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:layout_marginTop="30dp"
-        android:text="Current Acceleration:"
-        android:textSize="20dp" />
     <Button
-        android:id="@+id/button"
+        android:id="@+id/soundButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="SOUND"
-        android:textSize="20dp"
-        android:onClick="makeSound"/>
+        android:layout_marginTop="50dp"
+        android:text="\nTOGGLE SOUND\n"
+        android:textSize="26dp"
+        android:onClick="toggleSound"/>
 
 
 </LinearLayout>

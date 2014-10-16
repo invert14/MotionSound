@@ -13,7 +13,7 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import pl.gda.pg.eti.motion.sound.soundgenerator.SoundGenerator;
+import pl.gda.pg.eti.motion.sound.soundgenerator.AudioDevice;
 
 public class MainActivity extends ActionBarActivity implements SensorEventListener {
 
@@ -30,6 +30,12 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
     private TextView currentX, currentY, currentZ;
 
+    private AudioDevice audioDevice;
+
+    private float soundFrequency = 440;
+    private Thread soundThread;
+    private boolean shouldSound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,6 +43,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
         initializeViews();
         getSensor();
+        audioDevice = new AudioDevice();
     }
 
     private void initializeViews() {
@@ -53,15 +60,15 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
     protected void onPause() {
         super.onPause();
         sensorManager.unregisterListener((SensorEventListener) this);
+        shouldSound = false;
     }
 
     private void getSensor() {
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+            sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
         } else {
-            // fail we dont have an accelerometer!
             Toast failToast = Toast.makeText(getApplicationContext(), "Accelerometer not found :(", 2000);
             failToast.show();
         }
@@ -87,27 +94,50 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         return super.onOptionsItemSelected(item);
     }
 
-    public void makeSound(View view) throws InterruptedException {
+    public void toggleSound(View view) throws InterruptedException {
 
-        Toast toast = Toast.makeText(getApplicationContext(), "You should hear a sound", 1500);
-        toast.show();
+        if (!shouldSound) {
+            shouldSound = true;
+            Toast toast = Toast.makeText(getApplicationContext(), "You should hear a sound", 1500);
+            toast.show();
 
-        SoundGenerator.playTone(440, 960, 5);
+            //SoundGenerator...
 
-//        ToneGenerator toneGen = new ToneGenerator(AudioManager.STREAM_MUSIC, 90);
-//        toneGen.startTone(ToneGenerator.TONE_DTMF_0, 500);
-//        Thread.sleep(500);
-//        toneGen.startTone(ToneGenerator.TONE_DTMF_1, 500);
-//        Thread.sleep(500);
-//        toneGen.startTone(ToneGenerator.TONE_DTMF_2, 500);
-//        Thread.sleep(500);
-//        toneGen.release();
+            soundThread =  new Thread(new Runnable() {
+                @Override
+                public void run() {
+
+                    while(shouldSound) {
+                        float increment = (float) (2 * Math.PI) * soundFrequency / audioDevice.getSampleRate(); // angular increment for each sample
+                        float angle = 0;
+                        float samples[] = new float[audioDevice.getBufferSize()];
+
+                        for (int i = 0; i < samples.length; i++) {
+                            samples[i] = (float) Math.sin(angle);
+                            angle += increment;
+                        }
+
+                        audioDevice.writeSamples(samples);
+                    }
+                }
+            });
+            soundThread.start();
+
+        }
+        else {
+            shouldSound = false;
+        }
+
+
+
     }
 
     @Override
     public void onSensorChanged(SensorEvent sensorEvent) {
         cleanValues();
         updateCurrentValues();
+
+        soundFrequency += (int)(lastX * 10);
 
         deltaX = Math.abs(lastX - sensorEvent.values[0]);
         deltaY = Math.abs(lastY - sensorEvent.values[1]);
