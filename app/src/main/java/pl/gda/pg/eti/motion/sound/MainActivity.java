@@ -13,12 +13,15 @@ import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import pl.gda.pg.eti.motion.sound.shakedetector.ShakeDetectActivity;
+import pl.gda.pg.eti.motion.sound.shakedetector.ShakeDetectActivityListener;
 import pl.gda.pg.eti.motion.sound.soundgenerator.AudioDevice;
 
 public class MainActivity extends ActionBarActivity implements SensorEventListener {
 
     private float lastX, lastY, lastZ;
 
+    private ShakeDetectActivity shakeDetectActivity;
     private SensorManager sensorManager;
     private Sensor accelerometer;
 
@@ -35,6 +38,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
     private float soundFrequency = 440;
     private Thread soundThread;
     private boolean shouldSound = false;
+    private float shakeCoeff;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,6 +48,13 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         initializeViews();
         getSensor();
         audioDevice = new AudioDevice();
+        shakeDetectActivity = new ShakeDetectActivity(this);
+        shakeDetectActivity.addListener(new ShakeDetectActivityListener() {
+            @Override
+            public void shakeDetected() {
+                shakeCoeff = shakeDetectActivity.getLastShakeValue();
+            }
+        });
     }
 
     private void initializeViews() {
@@ -54,12 +65,14 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
     protected void onResume() {
         super.onResume();
-        sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_NORMAL);
+        shakeDetectActivity.onResume();
     }
 
     protected void onPause() {
         super.onPause();
-        sensorManager.unregisterListener((SensorEventListener) this);
+        sensorManager.unregisterListener(this);
+        shakeDetectActivity.onPause();
         shouldSound = false;
     }
 
@@ -67,7 +80,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER) != null) {
             accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
-            sensorManager.registerListener((SensorEventListener) this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
         } else {
             Toast failToast = Toast.makeText(getApplicationContext(), "Accelerometer not found :(", 2000);
             failToast.show();
@@ -113,11 +126,15 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
                         float samples[] = new float[audioDevice.getBufferSize()];
 
                         for (int i = 0; i < samples.length; i++) {
-                            samples[i] = (float) Math.sin(angle);
+                            samples[i] = (float) Math.sin(angle) * (shakeCoeff / 20);
                             angle += increment;
                         }
 
                         audioDevice.writeSamples(samples);
+                        if (shakeCoeff >= 0.1)
+                            shakeCoeff -= 0.1;
+                        else
+                            shakeCoeff = 0.0f;
                     }
                 }
             });
@@ -137,7 +154,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         cleanValues();
         updateCurrentValues();
 
-        soundFrequency += (int)(lastX * 10);
+//        soundFrequency += (int)(lastX * 10);
 
         deltaX = Math.abs(lastX - sensorEvent.values[0]);
         deltaY = Math.abs(lastY - sensorEvent.values[1]);
