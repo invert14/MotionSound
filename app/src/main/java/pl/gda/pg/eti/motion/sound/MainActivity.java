@@ -10,6 +10,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -31,7 +33,9 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
     private final float NOISE_THRESHOLD = 1;
 
-    private TextView currentX, currentY, currentZ;
+    private TextView currentX, currentY, currentZ, currentShaking;
+    private Button soundButton;
+    private SeekBar shakeSensitivity;
 
     private AudioDevice audioDevice;
 
@@ -39,6 +43,8 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
     private Thread soundThread;
     private boolean shouldSound = false;
     private float shakeCoeff;
+    private float angle = 0;
+    private float increment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,19 +54,45 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
         initializeViews();
         getSensor();
         audioDevice = new AudioDevice();
+        increment = (float) (2 * Math.PI) * soundFrequency / audioDevice.getSampleRate();
         shakeDetectActivity = new ShakeDetectActivity(this);
         shakeDetectActivity.addListener(new ShakeDetectActivityListener() {
             @Override
             public void shakeDetected() {
                 shakeCoeff = shakeDetectActivity.getLastShakeValue();
+                updateShakingTextView(shakeCoeff);
             }
         });
+    }
+
+    private void updateShakingTextView(float shaking) {
+        currentShaking.setText(Float.toString(shaking));
     }
 
     private void initializeViews() {
         currentX = (TextView) findViewById(R.id.currentX);
         currentY = (TextView) findViewById(R.id.currentY);
         currentZ = (TextView) findViewById(R.id.currentZ);
+        currentShaking = (TextView) findViewById(R.id.currentShaking);
+        soundButton = (Button) findViewById(R.id.soundButton);
+        shakeSensitivity = (SeekBar) findViewById(R.id.shakeSensitivitySlider);
+        shakeSensitivity.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                //Toast.makeText(getApplicationContext(), "" + seekBar.getProgress(), Toast.LENGTH_SHORT).show();
+                shakeDetectActivity.setSensitivity(seekBar.getProgress());
+            }
+        });
     }
 
     protected void onResume() {
@@ -111,8 +143,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
         if (!shouldSound) {
             shouldSound = true;
-            Toast toast = Toast.makeText(getApplicationContext(), "You should hear a sound", 1500);
-            toast.show();
+            soundButton.setText("Switch sound OFF");
 
             //SoundGenerator...
 
@@ -121,20 +152,24 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
                 public void run() {
 
                     while(shouldSound) {
-                        float increment = (float) (2 * Math.PI) * soundFrequency / audioDevice.getSampleRate(); // angular increment for each sample
-                        float angle = 0;
                         float samples[] = new float[audioDevice.getBufferSize()];
 
                         for (int i = 0; i < samples.length; i++) {
-                            samples[i] = (float) Math.sin(angle) * (shakeCoeff / 20);
+                            samples[i] = (float) Math.sin(angle) * shakeCoeff;
                             angle += increment;
                         }
 
                         audioDevice.writeSamples(samples);
-                        if (shakeCoeff >= 0.1)
-                            shakeCoeff -= 0.1;
+                        if (shakeCoeff >= 0.01)
+                            shakeCoeff -= 0.01;
                         else
-                            shakeCoeff = 0.0f;
+                            shakeCoeff = 0.00f;
+                        currentShaking.post(new Runnable() {
+                            public void run() {
+                                currentShaking.setText(Float.toString(shakeCoeff));
+                            }
+                        });
+                        //MainActivity.this.updateShakingTextView(shakeCoeff);
                     }
                 }
             });
@@ -142,6 +177,7 @@ public class MainActivity extends ActionBarActivity implements SensorEventListen
 
         }
         else {
+            soundButton.setText("Switch sound ON");
             shouldSound = false;
         }
 

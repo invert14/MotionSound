@@ -60,7 +60,11 @@ public class ShakeDetectActivity implements SensorEventListener {
     private long lastUpdate;
     private long lastShake = 0;
 
-    private float last_x = 0, last_y=0, last_z=0;
+    private float last_x = 0, last_y = 0, last_z = 0, sensitivity = 0;
+
+    public void setSensitivity(float sensitivity) {
+        this.sensitivity = sensitivity;
+    }
 
     @Override
     public void onSensorChanged(SensorEvent event) {
@@ -97,6 +101,7 @@ public class ShakeDetectActivity implements SensorEventListener {
     private static final long MINIMUM_EACH_DIRECTION = 7;
     private static final float POSITIVE_COUNTER_THRESHOLD = (float) 0.5;
     private static final float NEGATIVE_COUNTER_THRESHOLD = (float) -0.5;
+    private static final float MAX_SHAKE_COEFF = 100.0f;
 
     public float getLastShakeValue() {
         return lastShakeValue;
@@ -136,6 +141,7 @@ public class ShakeDetectActivity implements SensorEventListener {
             lastShakeValue = Math.max(lastShakeValue, dp.x);
             lastShakeValue = Math.max(lastShakeValue, dp.y);
             lastShakeValue = Math.max(lastShakeValue, dp.z);
+            lastShakeValue = Math.min(lastShakeValue * sensitivity, MAX_SHAKE_COEFF) / MAX_SHAKE_COEFF;
         }
 //        Log.i("CHANGE", Integer.toString(x_pos) + " - " + Integer.toString(x_neg) + "  " + Integer.toString(y_pos) + " - " + Integer.toString(y_neg) + "  " + Integer.toString(z_pos) + " - " + Integer.toString(z_neg));
 

@@ -7,72 +7,60 @@
     android:orientation="vertical"
     android:paddingTop="20dp" >
 
-    <TextView
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginBottom="10dp"
-        android:text="Acceleration:"
-        android:textSize="20dp" />
+        android:orientation="vertical">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="Acceleration: X-Axis"
-        android:textSize="15dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Acceleration:" />
 
-    <TextView
-        android:id="@+id/currentX"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="0.0"
-        android:textSize="20dp" />
+        <TextView
+            android:id="@+id/currentX"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="Acceleration: Y-Axis"
-        android:textSize="15dp" />
+        <TextView
+            android:id="@+id/currentY"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0"/>
 
-    <TextView
-        android:id="@+id/currentY"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="0.0"
-        android:textSize="20dp" />
+        <TextView
+            android:id="@+id/currentZ"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="20dp"
-        android:text="Acceleration: Z-Axis"
-        android:textSize="15dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shaking:"/>
 
-    <TextView
-        android:id="@+id/currentZ"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:text="0.0"
-        android:textSize="20dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0.0"
+            android:id="@+id/currentShaking"/>
+
+        </LinearLayout>
+
+    <SeekBar
+        android:id="@+id/shakeSensitivitySlider"
+        android:max="100"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" />
+
 
     <Button
         android:id="@+id/soundButton"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="\nTOGGLE SOUND\n"
-        android:textSize="26dp"
+        android:text="Switch sound ON"
+        android:textSize="26sp"
         android:onClick="toggleSound"/>
 
 
