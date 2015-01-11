@@ -20,18 +20,18 @@ import java.util.List;
  * @copyright 2013 JMB Technology Limited
  * @license Open Source; 3-clause BSD
  */
-public class ShakeDetectActivity implements SensorEventListener {
+public class ShakeDectector implements SensorEventListener {
 
     SensorManager sensorMgr;
     private float lastShakeValue = (float) 0.0;
 
-    public ShakeDetectActivity(Context context) {
+    public ShakeDectector(Context context) {
         sensorMgr = (SensorManager) context.getSystemService(Activity.SENSOR_SERVICE);
-        sensorMgr.registerListener(this,sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
+        sensorMgr.registerListener(this,sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void onResume() {
-        sensorMgr.registerListener(this,sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_GAME);
+        sensorMgr.registerListener(this,sensorMgr.getDefaultSensor(Sensor.TYPE_ACCELEROMETER),SensorManager.SENSOR_DELAY_FASTEST);
     }
 
     public void onPause() {

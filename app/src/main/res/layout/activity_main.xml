@@ -7,6 +7,36 @@
     android:orientation="vertical"
     android:paddingTop="20dp" >
 
+    <RadioGroup
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+
+        <RadioButton
+            android:id="@+id/shakeDetectionRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Shake Detection"
+            android:textSize="26sp"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/tiltDetectionRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Tilt Detection"
+            android:textSize="26sp"
+            android:onClick="onRadioButtonClicked"/>
+
+        <RadioButton
+            android:id="@+id/soundGeneratorRadioButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Sound Generator"
+            android:textSize="26sp"
+            android:onClick="onRadioButtonClicked"/>
+
+        </RadioGroup>
+
     <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -60,8 +90,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Switch sound ON"
-        android:textSize="26sp"
-        android:onClick="toggleSound"/>
+        android:textSize="26sp"/>
 
 
 </LinearLayout>
