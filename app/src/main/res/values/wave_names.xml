@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="wave_names">
+        <item>sine</item>
+        <item>sawtooth</item>
+        <item>triangle</item>
+        <item>square</item>
+    </string-array>
+
+</resources>
