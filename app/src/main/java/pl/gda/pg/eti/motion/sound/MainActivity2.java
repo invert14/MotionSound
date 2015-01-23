@@ -3,6 +3,7 @@ package pl.gda.pg.eti.motion.sound;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -21,13 +22,17 @@ public class MainActivity2 extends ActionBarActivity {
     Spinner waveSpinner;
     SeekBar frequencyBar;
     Button changeVersionButton;
-    SoundGenerator soundGenerator = new SoundGenerator();
+    SoundGenerator soundGenerator;
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main2);
+
+        Log.v("CREATETEST", "TEST");
+
+        soundGenerator = new SoundGenerator(this);
 
         soundGenerator.startThread();
 
@@ -82,7 +87,7 @@ public class MainActivity2 extends ActionBarActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                soundGenerator.prepareWaves(seekBar.getProgress());
+                soundGenerator.changeFrequency(seekBar.getProgress());
             }
         });
     }
